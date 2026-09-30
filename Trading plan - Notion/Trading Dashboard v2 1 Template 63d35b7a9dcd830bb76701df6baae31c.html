@@ -1,0 +1,800 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Trading Dashboard v2.1 Template</title><meta name="data-notion-page-icon" content="💻"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%BB%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="63d35b7a-9dcd-830b-b767-01df6baae31c" class="page sans" data-notion-page-icon="💻"><header><img class="page-cover-image" src="Trading%20Dashboard%20v2%201%20Template/Untitled_design_(2).png" style="object-position:center 47.699999999999996%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon" data-emoji="💻"></span></div><h1 class="page-title" dir="auto">Trading Dashboard v2.1 Template</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><hr id="1b035b7a-9dcd-82c8-bdfe-81d12c9e8a23" dir="auto"/><div id="a9435b7a-9dcd-83fd-b768-81d4bc719bcf" class="column-list" data-notion-column-list="" dir="auto"><div id="c5235b7a-9dcd-83fa-825d-8195c9123758" style="width:20.000000000000007%" class="column" data-notion-column-ratio="0.20000000000000007" dir="auto"><h2 id="bd035b7a-9dcd-82d5-aeeb-813dd59563b3" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">Trading Plan</h2><hr id="f6235b7a-9dcd-8272-8379-0125be83df22" dir="auto"/><figure id="3e435b7a-9dcd-835e-8b6f-81b8f86941c5" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Trading%20Plan%203e435b7a9dcd835e8b6f81b8f86941c5.html" data-notion-page-id="3e435b7a-9dcd-835e-8b6f-81b8f86941c5" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="📋"></span>Trading Plan</a></figure><figure id="6d535b7a-9dcd-822e-b990-8197eaaf0edb" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Trading%20Plan%20(1)%206d535b7a9dcd822eb9908197eaaf0edb.html" data-notion-page-id="6d535b7a-9dcd-822e-b990-8197eaaf0edb" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="📋"></span>Trading Plan (1)</a></figure><figure id="bf535b7a-9dcd-82d7-91c1-010c2bb42e16" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Setups%20bf535b7a9dcd82d791c1010c2bb42e16.html" data-notion-page-id="bf535b7a-9dcd-82d7-91c1-010c2bb42e16" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="🚀"></span>Setups</a></figure></div><div id="28b35b7a-9dcd-8323-8e12-01c28de3a23f" style="width:20.000000000000007%" class="column" data-notion-column-ratio="0.20000000000000007" dir="auto"><h2 id="1ec35b7a-9dcd-836c-84c2-81a0105d8b58" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">Testing</h2><hr id="5d535b7a-9dcd-821d-84f8-011c1535660c" dir="auto"/><figure id="2e335b7a-9dcd-8279-b742-01d39ec8782e" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Forward%20Tests%202e335b7a9dcd8279b74201d39ec8782e.html" data-notion-page-id="2e335b7a-9dcd-8279-b742-01d39ec8782e" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="🔮"></span>Forward Tests</a></figure><figure id="e0535b7a-9dcd-82c9-9a78-8128462d394e" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Backtests%20e0535b7a9dcd82c99a788128462d394e.html" data-notion-page-id="e0535b7a-9dcd-82c9-9a78-8128462d394e" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="🧪"></span>Backtests</a></figure><p id="04e35b7a-9dcd-82e2-b35f-0123bb63faf5" class="" dir="auto">
+</p></div><div id="78c35b7a-9dcd-83c4-97f1-017febbe0993" style="width:20%" class="column" data-notion-column-ratio="0.2" dir="auto"><h2 id="55d35b7a-9dcd-82b7-9e0a-8118fa6a7284" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">Journaling</h2><hr id="e5435b7a-9dcd-8306-999d-816e8610feaf" dir="auto"/><figure id="c2435b7a-9dcd-8378-b87b-0191cdbd94a4" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Trade%20Journal%20c2435b7a9dcd8378b87b0191cdbd94a4.html" data-notion-page-id="c2435b7a-9dcd-8378-b87b-0191cdbd94a4" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="📊"></span>Trade Journal</a></figure><figure id="51c35b7a-9dcd-83cb-8afe-81d69c899161" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Trade%20Journal%20Spreadsheet%2051c35b7a9dcd83cb8afe81d69c899161.html" data-notion-page-id="51c35b7a-9dcd-83cb-8afe-81d69c899161" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="💹"></span>Trade Journal Spreadsheet</a></figure></div><div id="deb35b7a-9dcd-8377-a60e-0165a0658839" style="width:20.000000000000007%" class="column" data-notion-column-ratio="0.20000000000000007" dir="auto"><h2 id="cb735b7a-9dcd-82af-b627-013aa4bd793e" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">Resources</h2><hr id="7d935b7a-9dcd-825e-9392-0146e8c03aa6" dir="auto"/><figure id="3a735b7a-9dcd-839a-8387-81c546d86b08" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Course%20Notes%203a735b7a9dcd839a838781c546d86b08.html" data-notion-page-id="3a735b7a-9dcd-839a-8387-81c546d86b08" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="👨‍🎓"></span>Course Notes</a></figure><figure id="9ee35b7a-9dcd-82d5-8e97-017d09fe3a42" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Course%20Downloads%209ee35b7a9dcd82d58e97017d09fe3a42.html" data-notion-page-id="9ee35b7a-9dcd-82d5-8e97-017d09fe3a42" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="📥"></span>Course Downloads</a></figure><figure id="a6d35b7a-9dcd-82cf-8f28-011e176a7b40" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Books%20a6d35b7a9dcd82cf8f28011e176a7b40.html" data-notion-page-id="a6d35b7a-9dcd-82cf-8f28-011e176a7b40" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="📚"></span>Books</a></figure><figure id="bdf35b7a-9dcd-8238-8a17-01e25ea4495b" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Brokers%20&amp;%20Charting%20bdf35b7a9dcd82388a1701e25ea4495b.html" data-notion-page-id="bdf35b7a-9dcd-8238-8a17-01e25ea4495b" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="🏦"></span>Brokers &amp; Charting</a></figure></div><div id="b0635b7a-9dcd-82cc-9311-812d495cbe63" style="width:20.000000000000007%" class="column" data-notion-column-ratio="0.20000000000000007" dir="auto"><h2 id="97535b7a-9dcd-833d-96a3-01fa627992ce" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">Goals</h2><hr id="58635b7a-9dcd-8362-a3b0-01ad31731f1c" dir="auto"/><figure id="00635b7a-9dcd-833f-a2f8-817fdf5ea1dc" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Goals%20Template%2000635b7a9dcd833fa2f8817fdf5ea1dc.html" data-notion-page-id="00635b7a-9dcd-833f-a2f8-817fdf5ea1dc" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="⚙️"></span>Goals Template </a></figure><figure id="58e35b7a-9dcd-82c7-93f1-0180ce2a36a5" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Goals%202023%2058e35b7a9dcd82c793f10180ce2a36a5.html" data-notion-page-id="58e35b7a-9dcd-82c7-93f1-0180ce2a36a5" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="🎯"></span>Goals 2023</a></figure><figure id="bb935b7a-9dcd-828b-ac99-81e473600cd1" class="link-to-page"><a href="Trading%20Dashboard%20v2%201%20Template/Weekly%20Reviews%20bb935b7a9dcd828bac9981e473600cd1.html" data-notion-page-id="bb935b7a-9dcd-828b-ac99-81e473600cd1" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d"><span class="icon" data-emoji="💭"></span>Weekly Reviews</a></figure></div></div><hr id="67b35b7a-9dcd-83ca-af25-0109a48b822a" dir="auto"/><h1 id="85935b7a-9dcd-8303-948b-01ac9aac8a4e" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">📝 Self Journal</h1><div id="f7b35b7a-9dcd-831b-a65e-81ae669c3a0c" class="column-list" data-notion-column-list="" dir="auto"><div id="88735b7a-9dcd-8326-9994-8146040c6920" style="width:50%" class="column" data-notion-column-ratio="0.5" dir="auto"><h2 id="1c835b7a-9dcd-82df-8312-81dc8cfdafad" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">🏔 Quarterly Goals:</h2><ul id="4aa35b7a-9dcd-82de-9d93-019fa5b397ae" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="bd235b7a-9dcd-831a-be7c-8177686e060b" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="76835b7a-9dcd-82a8-a70c-01ad0f9c6deb" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><h2 id="97935b7a-9dcd-839c-91e5-011c21cdd153" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">🎯 Monthly Goals:</h2><ul id="85f35b7a-9dcd-8265-8b20-013e3c3d8389" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="3e235b7a-9dcd-83c2-a98a-01375536553b" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="68235b7a-9dcd-8399-9761-81f6767c186f" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><h2 id="77735b7a-9dcd-8255-944f-010acb4e818e" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">💎 Weekly Milestones:</h2><ul id="f7835b7a-9dcd-828f-b135-015406c8e680" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="f2835b7a-9dcd-83b2-b9a5-016183d66284" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="16b35b7a-9dcd-820c-b2f7-01be327b5b89" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><h2 id="c0835b7a-9dcd-8295-b985-81c99d35d86a" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">🎓 Last Months Key Lessons:</h2><ul id="4ae35b7a-9dcd-82d9-958a-81028dcb2bda" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><ul id="7fd35b7a-9dcd-83ba-beba-81fa93aee0bb" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><ul id="20a35b7a-9dcd-8206-b9f8-81644cabe5e3" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul></div><div id="ecc35b7a-9dcd-8211-b847-011bdd0c8584" style="width:50%" class="column" data-notion-column-ratio="0.5" dir="auto"><blockquote id="a6135b7a-9dcd-8261-bfe6-817fc2aa28c7" class="" dir="auto">If I quit now, I will soon be back to where I started. And when I started, I was desperately wishing to be where I am now.</blockquote><h2 id="35535b7a-9dcd-82ab-abe6-0132cece2027" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">Habit Tracker</h2><p id="cbb35b7a-9dcd-8244-918a-81217613f425" class="" dir="auto"><em>People don&#x27;t decide their future, they decide their habits and their habits decide their future</em> - F.M Alexander</p><div id="dff35b7a-9dcd-8346-8d3c-01a63ecaf72f" class="collection-content" dir="ltr"><h4 class="collection-title">🗓 Daily Routine </h4><div class="collection-content-wrapper"><table class="collection-content"><colgroup><col style="width:32.432432432432435%"/><col style="width:13.513513513513514%"/><col style="width:13.513513513513514%"/><col style="width:13.513513513513514%"/><col style="width:13.513513513513514%"/><col style="width:13.513513513513502%"/></colgroup><thead><tr><th><span class="icon property-icon"><img src="https://app.notion.com/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Name</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>MON</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>TUES</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>WED</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>THU</th><th><span class="icon property-icon"><img src="https://app.notion.com/icons/checkmark-square_gray.svg" style="width:14px;height:14px;display:block"/></span>FRI</th></tr></thead><tbody><tr id="bb035b7a-9dcd-83b1-a0b2-0137383c2d95"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%E2%8F%B0%20Wake%20up%20at%205%2030am%20bb035b7a9dcd83b1a0b20137383c2d95.html" data-notion-page-id="bb035b7a-9dcd-83b1-a0b2-0137383c2d95" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">⏰ Wake up at 5:30am</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="c8035b7a-9dcd-8396-b4f8-0108c3717ecb"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%A7%98%E2%80%8D%E2%99%82%EF%B8%8F%20Meditate%20c8035b7a9dcd8396b4f80108c3717ecb.html" data-notion-page-id="c8035b7a-9dcd-8396-b4f8-0108c3717ecb" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">🧘‍♂️ Meditate</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="cdf35b7a-9dcd-8233-8187-01ddb7591ec3"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%94%AE%20Morning%20forecast%20cdf35b7a9dcd8233818701ddb7591ec3.html" data-notion-page-id="cdf35b7a-9dcd-8233-8187-01ddb7591ec3" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">🔮 Morning forecast</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="3e735b7a-9dcd-839d-8f78-81554d1b7755"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%8F%8B%EF%B8%8F%E2%80%8D%E2%99%82%EF%B8%8F%20Workout%203e735b7a9dcd839d8f7881554d1b7755.html" data-notion-page-id="3e735b7a-9dcd-839d-8f78-81554d1b7755" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">🏋️‍♂️ Workout</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="c3835b7a-9dcd-836f-82e8-011c1b8481a9"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%93%96%20Read%20c3835b7a9dcd836f82e8011c1b8481a9.html" data-notion-page-id="c3835b7a-9dcd-836f-82e8-011c1b8481a9" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">📖 Read</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="e8035b7a-9dcd-82af-81d4-01d8d203c6b4"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%93%B1%201%20hour%20screen%20time%20e8035b7a9dcd82af81d401d8d203c6b4.html" data-notion-page-id="e8035b7a-9dcd-82af-81d4-01d8d203c6b4" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">📱 &lt;1 hour screen time</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="9fe35b7a-9dcd-821b-999a-0148453d146e"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%94%AE%20Evening%20forecast%209fe35b7a9dcd821b999a0148453d146e.html" data-notion-page-id="9fe35b7a-9dcd-821b-999a-0148453d146e" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">🔮 Evening forecast</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr><tr id="86835b7a-9dcd-8267-9c17-014bae2d3344"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/%F0%9F%97%93%20Daily%20Routine/%F0%9F%93%9D%20Plan%20tomorrow%2086835b7a9dcd82679c17014bae2d3344.html" data-notion-page-id="86835b7a-9dcd-8267-9c17-014bae2d3344" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">📝 Plan tomorrow</a></td><td class="cell-5*Il"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-?6S5"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-A;kL"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-]Mb*"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td><td class="cell-Swxm"><input type="checkbox" class="checkbox checkbox-off" disabled=""/></td></tr></tbody></table></div><br/><br/></div><p id="50235b7a-9dcd-8273-855b-8126f385d564" class="" dir="auto">
+</p></div></div><hr id="25635b7a-9dcd-82d5-bd19-8152fd0c8e2e" dir="auto"/><h1 id="59d35b7a-9dcd-821b-b57e-81b777c0c59a" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">📆 This Weeks Plan</h1><div id="1ef35b7a-9dcd-8333-890d-814c835d1c3e" class="column-list" data-notion-column-list="" dir="auto"><div id="6b835b7a-9dcd-8355-8143-01d265c96457" style="width:33.33333333333333%" class="column" data-notion-column-ratio="0.3333333333333333" dir="auto"><h2 id="1ad35b7a-9dcd-839f-85af-81fe9be99aa4" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">MONDAY</h2><hr id="9e335b7a-9dcd-82b8-982f-0185b8a55438" dir="auto"/><h3 id="90435b7a-9dcd-839f-8649-817fd5d029c0" class="" dir="auto"><strong>☀️ This morning I am grateful for:</strong></h3><ol type="1" id="ab235b7a-9dcd-82a5-9ba6-01d338416217" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="12735b7a-9dcd-825a-b332-01a004ea70c7" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="ccf35b7a-9dcd-82dd-8421-0169f7dc79fb" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="8b335b7a-9dcd-8365-9d56-8197606bf33b" dir="auto"/><h3 id="11c35b7a-9dcd-837e-9673-81f9d8ef153d" class="" dir="auto">🎯 <strong>Today&#x27;s targets:</strong></h3><ul id="64635b7a-9dcd-83d9-a4ea-816005e2c324" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-on" disabled="" checked=""/> <span class="to-do-children-checked">Re-watch MTF Market Structure Lesson</span><div class="indented"></div></li></ul><ul id="7c335b7a-9dcd-8202-a4c6-01d9e554e247" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="43a35b7a-9dcd-82d3-bc89-01ebbbdb1fea" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><hr id="f2635b7a-9dcd-82cb-be3a-012da9520348" dir="auto"/><h3 id="c0835b7a-9dcd-82a8-9ced-016328a6ff2a" class="" dir="auto">👨‍🏫 <strong>Lessons learned:</strong></h3><ul id="3f935b7a-9dcd-830a-bce1-81a58810a445" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="ee335b7a-9dcd-83d9-ad14-8188585a4f58" dir="auto"/><h3 id="73435b7a-9dcd-8254-97cf-0121a0168951" class="" dir="auto">✅ Wins:</h3><ul id="d5635b7a-9dcd-83d0-90c6-81e2d5a75100" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="d8d35b7a-9dcd-82ef-9f6e-013fc05d3ab1" dir="auto"/><h3 id="31a35b7a-9dcd-8386-8153-81fb4c87073f" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="05c35b7a-9dcd-8342-b5fe-015fc89e30a8" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="ac935b7a-9dcd-83b6-84ce-01357e4f4dee" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="15235b7a-9dcd-82dd-8c74-010e2151a1d8" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="e2e35b7a-9dcd-82e5-8827-81efc2fb9cc4" dir="auto"/><p id="81735b7a-9dcd-8228-acb4-010a5e033cfd" class="" dir="auto">
+</p></div><div id="31735b7a-9dcd-8368-8476-0184c0cdbd61" style="width:33.33333333333334%" class="column" data-notion-column-ratio="0.3333333333333334" dir="auto"><h2 id="27635b7a-9dcd-8236-8329-8181b845a52e" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">TUESDAY</h2><hr id="23635b7a-9dcd-82ca-b566-010e128fd486" dir="auto"/><h3 id="d1535b7a-9dcd-8377-9e44-81f9a24c8311" class="" dir="auto">☀️ This morning I am grateful for:</h3><ol type="1" id="52435b7a-9dcd-8245-a742-01fe1f9b3575" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="f1635b7a-9dcd-8231-b6cb-014c098f05bc" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="b4335b7a-9dcd-8272-84c4-0156bdf85581" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="b8235b7a-9dcd-821d-b505-8175351d5fab" dir="auto"/><h3 id="5aa35b7a-9dcd-823d-b471-81788185278d" class="" dir="auto">🎯 Today&#x27;s targets:</h3><ul id="96135b7a-9dcd-8238-af2b-019add6bd292" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="22635b7a-9dcd-8223-8fe2-816a0462b116" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="0ef35b7a-9dcd-821e-9107-0174367c00c7" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><hr id="f7a35b7a-9dcd-826e-84bf-810afbf9d137" dir="auto"/><h3 id="17535b7a-9dcd-82c5-a609-810aaacfc471" class="" dir="auto">👨‍🏫 Lessons learned:</h3><ul id="31a35b7a-9dcd-83ff-b235-8149e17f192b" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="8ac35b7a-9dcd-8271-adca-0103fba0e5fe" dir="auto"/><h3 id="b6535b7a-9dcd-83dc-aa68-817c88bd6990" class="" dir="auto">✅ Wins:</h3><ul id="65a35b7a-9dcd-8211-830c-81896201976c" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="db735b7a-9dcd-8362-b4a5-816c4b28dc32" dir="auto"/><h3 id="67635b7a-9dcd-8275-a445-812e91deaf77" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="1d835b7a-9dcd-8396-8f7e-01235a47bb76" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="eaf35b7a-9dcd-8299-b0b4-019836136e71" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="15a35b7a-9dcd-8390-b3ad-01a93b93bfbb" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="0b135b7a-9dcd-82fb-86c4-81ae35bc0975" dir="auto"/></div><div id="09d35b7a-9dcd-8349-a20f-81d5f25f32c4" style="width:33.33333333333333%" class="column" data-notion-column-ratio="0.3333333333333333" dir="auto"><h2 id="93435b7a-9dcd-83c7-b470-01d7c04da32c" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">WEDNESDAY</h2><hr id="f2e35b7a-9dcd-82da-8773-8104d7485fea" dir="auto"/><h3 id="31935b7a-9dcd-82dc-8975-81c59efba3cf" class="" dir="auto">☀️ This morning I am grateful for:</h3><ol type="1" id="97035b7a-9dcd-8215-acf2-81dba0f954b7" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="17b35b7a-9dcd-8376-b5c2-8198d1c477e5" class="numbered-list" start="2" dir="auto"><li></li></ol><hr id="c2335b7a-9dcd-82cf-946d-018045636204" dir="auto"/><h3 id="70f35b7a-9dcd-824c-bfca-81c36dd24a36" class="" dir="auto">🎯 Today&#x27;s targets:</h3><ul id="3ae35b7a-9dcd-82e7-bbd4-81def5bd56bc" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="d6935b7a-9dcd-82e0-a643-018a8ab516ec" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="ba535b7a-9dcd-8308-a56f-0145efd05fb9" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><hr id="8ae35b7a-9dcd-83be-8694-8118dad3910b" dir="auto"/><h3 id="3c035b7a-9dcd-83cb-983c-018a1c9b0517" class="" dir="auto">👨‍🏫 Lessons learned:</h3><ul id="b7835b7a-9dcd-8378-be3e-019294c524fe" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="ebf35b7a-9dcd-83a4-9015-0124d1d979d9" dir="auto"/><h3 id="eea35b7a-9dcd-83e0-9c23-0114ea11b4aa" class="" dir="auto">✅ Wins:</h3><ul id="2d935b7a-9dcd-824a-abda-817877cfcd24" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="8a435b7a-9dcd-8243-b131-013fb6087a52" dir="auto"/><h3 id="e1835b7a-9dcd-83ba-b14e-8186e1e73fbd" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="dc235b7a-9dcd-8383-90a5-014a40c1fbab" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="d1535b7a-9dcd-8306-a356-8150aea26cbf" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="c8835b7a-9dcd-83cf-9e34-0111776aa9fb" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="47435b7a-9dcd-8256-b1d5-013816b89b49" dir="auto"/></div></div><div id="40a35b7a-9dcd-82a0-af88-810856d161e3" class="column-list" data-notion-column-list="" dir="auto"><div id="78b35b7a-9dcd-82af-be05-81329c63505d" style="width:33.333333333333336%" class="column" data-notion-column-ratio="0.33333333333333337" dir="auto"><h2 id="58835b7a-9dcd-833c-96ed-01d66784a5e7" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">THURSDAY</h2><hr id="d3435b7a-9dcd-829f-beb5-019504844857" dir="auto"/><h3 id="5b935b7a-9dcd-837e-b0b3-81cb91018cd1" class="" dir="auto">☀️ This morning I am grateful for:</h3><ol type="1" id="62935b7a-9dcd-82ae-87f3-81c9dd369471" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="11e35b7a-9dcd-8270-9664-01bbfdd76597" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="52535b7a-9dcd-8317-b9dd-81c9ec9b85ba" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="8d735b7a-9dcd-8328-a7af-8130d78b3074" dir="auto"/><h3 id="05135b7a-9dcd-829d-bd8a-81eb96196243" class="" dir="auto">🎯 Today&#x27;s targets:</h3><ul id="af935b7a-9dcd-83c3-bec3-0105653dc926" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="e9235b7a-9dcd-8339-bf04-01afa7dd94bd" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="12c35b7a-9dcd-82db-b2d1-8145d25b5f4c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><hr id="a0635b7a-9dcd-8312-be27-81b136df0ac1" dir="auto"/><h3 id="82935b7a-9dcd-8365-9035-81713ec60bd2" class="" dir="auto">👨‍🏫 Lessons learned:</h3><ul id="99835b7a-9dcd-8327-8546-811973e5ffb2" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="b1635b7a-9dcd-8317-b47e-012cce9c805b" dir="auto"/><h3 id="45535b7a-9dcd-8346-88b2-016c010de28a" class="" dir="auto">✅ Wins:</h3><ul id="b5d35b7a-9dcd-827e-9bcf-014df9a66fa1" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="ec235b7a-9dcd-8392-9013-816638aa72eb" dir="auto"/><h3 id="7f635b7a-9dcd-8389-9eab-81304935ec0f" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="02035b7a-9dcd-83bc-b488-817fac51526a" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="99035b7a-9dcd-82fc-ba29-813285d4f7b3" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="ace35b7a-9dcd-82c7-9e7f-8155a7090609" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="ed835b7a-9dcd-821e-a8e1-8172b456e577" dir="auto"/></div><div id="1af35b7a-9dcd-8218-b8ff-81bf96fa34c1" style="width:33.333333333333336%" class="column" data-notion-column-ratio="0.33333333333333337" dir="auto"><h2 id="ff835b7a-9dcd-8297-94d1-817e4a514440" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">FRIDAY</h2><hr id="fdc35b7a-9dcd-82a5-822e-01c9bb01c710" dir="auto"/><h3 id="1f935b7a-9dcd-831e-9219-81ea1d9a8c8c" class="" dir="auto">☀️ This morning I am grateful for:</h3><ol type="1" id="eeb35b7a-9dcd-8390-80b9-81dfe7030a41" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="43e35b7a-9dcd-82ee-a0c8-81e51ffbb8b4" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="d8335b7a-9dcd-83b1-8a15-81c0029cb29b" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="5e935b7a-9dcd-8248-932b-01081b8deef5" dir="auto"/><h3 id="20135b7a-9dcd-82cd-8e21-01805b2207db" class="" dir="auto">🎯 Today&#x27;s targets:</h3><ul id="48735b7a-9dcd-8314-a7ca-01f277363f4f" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="84a35b7a-9dcd-835c-9458-819fc065673c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><ul id="d5d35b7a-9dcd-8277-adb6-015ef65700f7" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked"></span><div class="indented"></div></li></ul><hr id="3ff35b7a-9dcd-82ce-93f6-815f255fb112" dir="auto"/><h3 id="e5835b7a-9dcd-83d0-b51c-81b3094776e1" class="" dir="auto">👨‍🏫 Lessons learned:</h3><ul id="19e35b7a-9dcd-83ed-94fb-017a64a2d886" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="4e335b7a-9dcd-83c4-ab29-813e08881758" dir="auto"/><h3 id="ca835b7a-9dcd-836b-90d6-816e77d1d059" class="" dir="auto">✅ Wins:</h3><ul id="20035b7a-9dcd-83eb-bbb3-8173123940ba" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="de535b7a-9dcd-8243-bc9f-811fe2c946ac" dir="auto"/><h3 id="e9935b7a-9dcd-8248-a111-812955d9a38a" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="50635b7a-9dcd-838c-82aa-013928bca8b2" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="e1835b7a-9dcd-833d-b26c-81f48c2d287c" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="d7235b7a-9dcd-83fc-a873-81e54aebbf30" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="13e35b7a-9dcd-82e5-bbf6-812d682ff808" dir="auto"/></div><div id="e8135b7a-9dcd-83af-8f0e-0149dbdc3ac9" style="width:33.33333333333333%" class="column" data-notion-column-ratio="0.3333333333333333" dir="auto"><h2 id="6d735b7a-9dcd-825b-b172-81166aef8bf3" class="block-color-yellow_background" data-notion-highlight="yellow_background" dir="auto">SATURDAY / SUNDAY</h2><hr id="23635b7a-9dcd-8304-a65d-0196300142fe" dir="auto"/><h3 id="5dd35b7a-9dcd-82ea-b02d-81a1f4db8b1c" class="" dir="auto">☀️ This morning I am grateful for:</h3><ol type="1" id="17435b7a-9dcd-8311-8da3-019374ef7dc3" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="e7c35b7a-9dcd-8276-8e5d-01aae29176fa" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="8b335b7a-9dcd-82f0-85b2-81b7508a6122" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="cb435b7a-9dcd-8232-9059-8122ba87e743" dir="auto"/><h3 id="97635b7a-9dcd-832a-a0cc-014502f1f290" class="" dir="auto">🎯 Today&#x27;s targets:</h3><ul id="9ab35b7a-9dcd-829b-a0cd-0140ad967cad" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Weekly trade review</span><div class="indented"></div></li></ul><ul id="4f835b7a-9dcd-8250-bb00-01b65b14f37b" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Weekly goal review</span><div class="indented"></div></li></ul><ul id="2aa35b7a-9dcd-82ad-9a5e-815636ecb978" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Weekly watchlist</span><div class="indented"></div></li></ul><hr id="85d35b7a-9dcd-83d4-ba21-018a98104c38" dir="auto"/><h3 id="9ab35b7a-9dcd-8260-a8f1-81f9e03cb0a6" class="" dir="auto">👨‍🏫 Lessons learned:</h3><ul id="da635b7a-9dcd-83ff-9912-0100ccb43a10" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="b2535b7a-9dcd-8336-b5c1-0199a11206da" dir="auto"/><h3 id="64d35b7a-9dcd-83a6-a714-0188784c4969" class="" dir="auto">✅ Wins:</h3><ul id="f7335b7a-9dcd-836c-b5b9-817a2568cae2" class="bulleted-list" dir="auto"><li style="list-style-type:disc"></li></ul><hr id="e6035b7a-9dcd-8331-8f84-817401883f56" dir="auto"/><h3 id="be235b7a-9dcd-8307-8614-014d02c640bc" class="" dir="auto">🌙 Tonight I am grateful for:</h3><ol type="1" id="fcf35b7a-9dcd-8388-8867-0149cb5cec4d" class="numbered-list" start="1" dir="auto"><li></li></ol><ol type="1" id="3cd35b7a-9dcd-823c-a451-8177d5b54e1c" class="numbered-list" start="2" dir="auto"><li></li></ol><ol type="1" id="a6235b7a-9dcd-82d6-b60e-818740f7de2d" class="numbered-list" start="3" dir="auto"><li></li></ol><hr id="dfa35b7a-9dcd-8212-9f86-81d78475dd4e" dir="auto"/></div></div><hr id="fa535b7a-9dcd-83d1-b257-810752b8004b" dir="auto"/><h1 id="ed435b7a-9dcd-833a-8ead-01442075e1b5" class="block-color-blue_background" data-notion-highlight="blue_background" dir="auto">🔭 Vision Board</h1><div id="6c535b7a-9dcd-82a3-81cd-01087ca465f3" class="collection-content" dir="ltr"><h4 class="collection-title">Goals</h4><div class="collection-content-wrapper"><table class="collection-content"><colgroup><col style="width:100%"/></colgroup><thead><tr><th><span class="icon property-icon"><img src="https://app.notion.com/icons/font_gray.svg" style="width:14px;height:14px;display:block"/></span>Name</th></tr></thead><tbody><tr id="60135b7a-9dcd-835c-badf-81cc541c9d5d"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/Goals/Goal%201%2060135b7a9dcd835cbadf81cc541c9d5d.html" data-notion-page-id="60135b7a-9dcd-835c-badf-81cc541c9d5d" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">Goal 1</a></td></tr><tr id="e6435b7a-9dcd-839e-b457-01fe99664792"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/Goals/Goal%202%20e6435b7a9dcd839eb45701fe99664792.html" data-notion-page-id="e6435b7a-9dcd-839e-b457-01fe99664792" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">Goal 2</a></td></tr><tr id="44935b7a-9dcd-832c-ab5f-815dfb5e43a2"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/Goals/Goal%203%2044935b7a9dcd832cab5f815dfb5e43a2.html" data-notion-page-id="44935b7a-9dcd-832c-ab5f-815dfb5e43a2" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">Goal 3</a></td></tr><tr id="6f235b7a-9dcd-83e9-8f76-819cc85d0bce"><td class="cell-title"><a href="Trading%20Dashboard%20v2%201%20Template/Goals/Untitled%206f235b7a9dcd83e98f76819cc85d0bce.html" data-notion-page-id="6f235b7a-9dcd-83e9-8f76-819cc85d0bce" data-notion-space-id="e2521e95-7429-497a-9c69-3579939a6a1d">Untitled</a></td></tr></tbody></table></div><br/><br/></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

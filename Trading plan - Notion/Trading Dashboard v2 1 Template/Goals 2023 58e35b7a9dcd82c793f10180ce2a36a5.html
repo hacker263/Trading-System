@@ -1,0 +1,809 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Goals 2023</title><meta name="data-notion-page-icon" content="🎯"/><link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%8E%AF%3C%2Ftext%3E%3C%2Fsvg%3E"/><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+	/* Paint a complete callout box on every PDF page fragment. */
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="58e35b7a-9dcd-82c7-93f1-0180ce2a36a5" class="page sans" data-notion-page-icon="🎯"><header><img class="page-cover-image" src="https://app.notion.com/images/page-cover/nasa_space_shuttle_challenger.jpg" style="object-position:center 0%"/><div class="page-header-icon page-header-icon-with-cover"><span class="icon" data-emoji="🎯"></span></div><h1 class="page-title" dir="auto">Goals 2023</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><p id="51735b7a-9dcd-8237-862e-8198ab2b4106" class="" dir="auto"><em>Focus on the process, not the outcome.</em></p><p id="db235b7a-9dcd-83f4-bed7-8198ff6df12f" class="" dir="auto">Plan your goals → Take consistent action → Accomplish your dreams. </p><hr id="66135b7a-9dcd-8320-8f4d-81d2d2c20e6d" dir="auto"/><h2 id="81735b7a-9dcd-82b9-8b21-81dd9aa0714b" class="" dir="auto">Annual Goals</h2><p id="31635b7a-9dcd-8306-82ec-8106e31d8c57" class="" dir="auto"><mark class="highlight-yellow" data-notion-highlight="yellow"><strong>To achieve by: End of 2023</strong></mark></p><hr id="f4635b7a-9dcd-836a-b370-8174d78d50d0" dir="auto"/><ul id="a0835b7a-9dcd-8221-8885-01139ff16c29" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="70435b7a-9dcd-82b7-b72f-817a4da19b0a" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="06735b7a-9dcd-8233-9389-8104adfecc3c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><hr id="4a735b7a-9dcd-8266-8616-017cc13e0a2c" dir="auto"/><h2 id="a6935b7a-9dcd-824f-8452-81b8d9eb247a" class="" dir="auto">Quarterly Goals</h2><div id="88135b7a-9dcd-8387-b151-0195048c4b6c" class="column-list" data-notion-column-list="" dir="auto"><div id="a0335b7a-9dcd-8311-8bf3-01dd0e87109e" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="64735b7a-9dcd-834a-a86f-011a4b9463b1" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong>To achieve by: End of Q1</strong></mark></p><hr id="45535b7a-9dcd-82e4-bfaa-016c18ba84f9" dir="auto"/><ul id="96f35b7a-9dcd-83e6-ad98-8161956f78ee" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="2da35b7a-9dcd-8328-b0bd-012084fc5765" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="a9035b7a-9dcd-8307-b98a-819564ab5f11" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div><div id="b1a35b7a-9dcd-82ca-9593-01020b332345" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="72e35b7a-9dcd-82e7-ba64-81ce311cc025" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong>To achieve by: End of Q2</strong></mark></p><hr id="3c735b7a-9dcd-82c7-a71d-811380c6f8c4" dir="auto"/><ul id="e6535b7a-9dcd-822b-b2a1-015cf8511b2a" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="99335b7a-9dcd-83ef-99a6-81dd4ccaa005" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="d1535b7a-9dcd-82e9-b199-01e4da9b25ad" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div><div id="9a335b7a-9dcd-82eb-95b0-0117ca4ae9a4" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="9c835b7a-9dcd-835d-9bae-81cd4e224c05" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong>To achieve by: End of Q3</strong></mark></p><hr id="cc235b7a-9dcd-8359-9e38-81d6ca012a16" dir="auto"/><ul id="5de35b7a-9dcd-8304-82ae-01aa723dc0b3" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="e5a35b7a-9dcd-8255-83bd-017de5c26aea" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="5ab35b7a-9dcd-82bd-97d1-812475e70f17" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div><div id="e7b35b7a-9dcd-82bb-87cb-81f1c8aba1ca" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="63135b7a-9dcd-83e9-b50b-8175162d7965" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong>To achieve by: End of Q4</strong></mark></p><hr id="f7135b7a-9dcd-820f-b3c4-01bebf15729a" dir="auto"/><ul id="5da35b7a-9dcd-83b8-b7dd-8199a9c14d8b" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="e3a35b7a-9dcd-8342-ba45-8157305bca61" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="fa135b7a-9dcd-827d-aa4b-813f3d004a1c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div></div><hr id="93635b7a-9dcd-8385-99d8-01012f3dbb66" dir="auto"/><div id="98635b7a-9dcd-82b3-8d33-81b27886c13b" class="column-list" data-notion-column-list="" dir="auto"><div id="34335b7a-9dcd-83a5-a258-01ccefe1c8e5" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><h2 id="37135b7a-9dcd-83bb-83ca-818a099795b4" class="" dir="auto">Monthly Goals</h2><p id="b7035b7a-9dcd-8300-a6af-01a1e61540a7" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Jan</strong></mark></p><hr id="ebe35b7a-9dcd-835e-89c6-8151ebcdba45" dir="auto"/><ul id="6a835b7a-9dcd-837c-be32-01621b5abdb7" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="5d735b7a-9dcd-837d-a027-01ca5976d9ea" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="d8235b7a-9dcd-8356-8674-814339c155d5" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="0f935b7a-9dcd-82a3-b3ed-018b9c0dea6d" class="" dir="auto">
+</p><hr id="c2b35b7a-9dcd-827f-ad82-012c43ace21c" dir="auto"/><p id="07035b7a-9dcd-824a-a596-816ad0e90293" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Feb</strong></mark></p><hr id="c9f35b7a-9dcd-836e-a938-815fa2075665" dir="auto"/><ul id="7f335b7a-9dcd-831d-a4a9-812c9f199025" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="1bd35b7a-9dcd-83fd-aa2c-0156025cc8df" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="41935b7a-9dcd-833a-bc3e-81c6851fda03" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="b5435b7a-9dcd-82d7-a39e-81c1ed059ba3" class="" dir="auto">
+</p><p id="51035b7a-9dcd-8203-afd0-81cd37766859" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Mar</strong></mark></p><hr id="59d35b7a-9dcd-8220-8e35-0123d4f96d2f" dir="auto"/><ul id="09935b7a-9dcd-83bf-a498-01d62bb63847" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="d9f35b7a-9dcd-8276-a243-81e78c2560a7" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="37335b7a-9dcd-83d9-be68-0161cb84e550" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div><div id="c4035b7a-9dcd-8208-bb96-81dbd4c03e4a" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="40535b7a-9dcd-82ab-be29-015184506826" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong> </strong></mark></p><p id="43735b7a-9dcd-83f5-afad-0143b819eeee" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Apr</strong></mark></p><hr id="61b35b7a-9dcd-83a3-b5d6-01d7d3ce1d95" dir="auto"/><ul id="f5b35b7a-9dcd-8326-bf6c-8101ae9fd6ea" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="a6135b7a-9dcd-8375-988c-810a842afe73" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="6c735b7a-9dcd-83fe-b3e0-81d73218410e" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="2a335b7a-9dcd-826a-9fec-014b496aebe2" class="" dir="auto">
+</p><p id="79235b7a-9dcd-8391-88ef-817889cd0232" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of May</strong></mark></p><hr id="38735b7a-9dcd-82d1-b726-81dd785870fd" dir="auto"/><ul id="5f835b7a-9dcd-8358-bf65-81c6313b2478" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="84835b7a-9dcd-82d6-b550-8180537a5cbe" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="14f35b7a-9dcd-831d-8971-01b9dc889b60" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="61035b7a-9dcd-83de-9075-0100a21dce17" class="" dir="auto">
+</p><p id="d7f35b7a-9dcd-8356-946a-81bd6f3abc90" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Jun</strong></mark></p><hr id="df035b7a-9dcd-8293-9e34-81774f8244e0" dir="auto"/><ul id="5d135b7a-9dcd-83a7-a9f7-01912ed1e9e1" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="50c35b7a-9dcd-82e7-bf79-0143490c30f9" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="88d35b7a-9dcd-832c-92bd-01b01b43d2b5" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="bcf35b7a-9dcd-83d2-8ba3-018a15ef9740" class="" dir="auto">
+</p></div><div id="47735b7a-9dcd-82f8-8662-012239d2f3eb" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="e0235b7a-9dcd-828e-944e-01161c29ffcb" class="" dir="auto">
+</p><p id="bde35b7a-9dcd-82ad-a085-01ed1d6c8359" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong> </strong></mark><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Jul</strong></mark></p><hr id="48635b7a-9dcd-827c-b95e-0149593be933" dir="auto"/><ul id="41835b7a-9dcd-8313-9fb1-81dbdc56ddac" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="e7035b7a-9dcd-825e-b6e1-8166008db4a2" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="03435b7a-9dcd-8223-ba1b-815c82b747f9" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="d6b35b7a-9dcd-82d0-b067-816553f00fc9" class="" dir="auto">
+</p><p id="2e635b7a-9dcd-82b5-aff3-81606bb99f15" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Aug</strong></mark></p><hr id="74a35b7a-9dcd-832a-a071-013c02da9e64" dir="auto"/><ul id="43635b7a-9dcd-82c3-bd38-01787301db10" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="39d35b7a-9dcd-82e1-ba18-810532a2d06a" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="cbb35b7a-9dcd-83ff-8caf-01af4bf8f7ec" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="06235b7a-9dcd-8373-9077-8126365db41d" class="" dir="auto">
+</p><p id="90435b7a-9dcd-82b8-8279-011b93e62a32" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Sep</strong></mark></p><hr id="6dd35b7a-9dcd-82fe-9d1c-015fdb616e12" dir="auto"/><ul id="ed135b7a-9dcd-834f-88a8-814dcb9f13a0" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="dae35b7a-9dcd-830f-a215-01c074e7065e" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="7ed35b7a-9dcd-834f-b5bc-811fe72c761d" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="1b535b7a-9dcd-829d-bd94-01fd019ded67" class="" dir="auto">
+</p></div><div id="9de35b7a-9dcd-8321-8462-81781f49c6e2" style="width:25%" class="column" data-notion-column-ratio="0.25" dir="auto"><p id="70935b7a-9dcd-82cd-b0ae-010d6b9cb163" class="" dir="auto">
+</p><p id="a2535b7a-9dcd-82ab-95c9-813aa74aa4ef" class="" dir="auto"><mark class="highlight-teal" data-notion-highlight="teal"><strong> </strong></mark><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Oct</strong></mark></p><hr id="bfc35b7a-9dcd-83cc-b4f0-01abb78b74c8" dir="auto"/><ul id="66935b7a-9dcd-837f-acd1-81795e200078" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="82335b7a-9dcd-832a-b3b1-81093d29bd8c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="5ad35b7a-9dcd-8393-b98d-0178a17b5e08" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="c0535b7a-9dcd-8390-bec8-81d52057b037" class="" dir="auto">
+</p><p id="08235b7a-9dcd-8353-be5d-0180d459f530" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Nov</strong></mark></p><hr id="69435b7a-9dcd-8240-880b-01786bfd2e3e" dir="auto"/><ul id="4fc35b7a-9dcd-82c3-8d32-01716bf82a51" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="ab235b7a-9dcd-833e-bab2-810f84c93765" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="2c735b7a-9dcd-83f6-9df1-81e4e4c44eae" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><p id="d6135b7a-9dcd-82b0-ac50-81e4ca3bfa4f" class="" dir="auto">
+</p><p id="06635b7a-9dcd-83bc-83da-019c89a7fb81" class="" dir="auto"><mark class="highlight-blue" data-notion-highlight="blue"><strong>To achieve by: End of Dec</strong></mark></p><hr id="65435b7a-9dcd-82af-8598-01c98334aa80" dir="auto"/><ul id="a9f35b7a-9dcd-8327-8869-01230857199a" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="99635b7a-9dcd-83ed-ad89-01b4df7b935c" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul><ul id="a8935b7a-9dcd-83cc-870c-01dc81b7dafe" class="to-do-list" dir="auto"><li><input type="checkbox" class="checkbox checkbox-off" disabled=""/> <span class="to-do-children-unchecked">Add new goal here</span><div class="indented"></div></li></ul></div></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>

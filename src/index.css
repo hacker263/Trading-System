@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  font-family: Inter, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  color: #1b232b;
+  background: #edf1f4;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: radial-gradient(circle at top left, rgba(219, 137, 96, 0.14), transparent 22%), #edf1f4;
+}
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: radial-gradient(circle at top left, rgba(219, 137, 96, 0.12), transparent 20%), #edf1f4;
+  color: #1b232b;
+}
+body, button, input, select, textarea { font-family: Inter, sans-serif; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #c86c46; outline-offset: 2px; }
+::selection { color: #1b232b; background: #f1d7c4; }
+#root { min-height: 100vh; background: transparent; }
