@@ -621,12 +621,24 @@ function App() {
   const [today] = useState(() => format(new Date(), "yyyy-MM-dd"));
   const [currentTime] = useState(() => format(new Date(), "HH:mm"));
   const [dayLabel] = useState(() => format(new Date(), "EEEE, MMMM d"));
+  const [weekdayLabel] = useState(() => format(new Date(), "EEEE").toUpperCase());
   const [topbarDateLabel] = useState(() => format(new Date(), "MMM d, yyyy"));
   const [currentYear] = useState(() => format(new Date(), "yyyy"));
   const [sessionNow] = useState(() => new Date());
   const [_goalDeadlineDefault] = useState(() =>
     format(subDays(new Date(), -30), "yyyy-MM-dd"),
   );
+  const metadataName = cloudUser?.user_metadata?.full_name;
+  const traderName =
+    typeof metadataName === "string" && metadataName.trim()
+      ? metadataName
+      : cloudUser?.email?.split("@")[0] ?? "Trader";
+  const greeting =
+    Number(currentTime.slice(0, 2)) < 12
+      ? "Good morning"
+      : Number(currentTime.slice(0, 2)) < 17
+        ? "Good afternoon"
+        : "Good evening";
   const cloudReady = !supabase || !cloudUser || cloudLoadStatus === "ready";
 
   const [backtest, setBacktest] = useState<BacktestResult>(() =>
@@ -1059,6 +1071,32 @@ function App() {
 
   function renderDashboard() {
     const checklistPreview = enabledRules.slice(0, 5);
+    const criticalChecksRemaining = enabledRules.filter(
+      (rule) => rule.priority === "Critical" && !checks[rule.id],
+    ).length;
+    const dashboardLossLimit =
+      (riskSettings.balance * riskSettings.dailyLossPct) / 100;
+    const dashboardDailyLoss = Math.max(0, -dailyPnl);
+    const dashboardLossPct = dashboardLossLimit
+      ? Math.min(100, (dashboardDailyLoss / dashboardLossLimit) * 100)
+      : 0;
+    const positionsAtCapacity = paper.length >= riskSettings.maxPositions;
+    const dailyLossLimitReached =
+      dashboardLossLimit > 0 && dashboardDailyLoss >= dashboardLossLimit;
+    const guardianStatus = dailyLossLimitReached
+      ? "limit"
+      : dashboardLossLimit <= 0 ||
+          dashboardLossPct >= 70 ||
+          criticalChecksRemaining > 0 ||
+          positionsAtCapacity
+        ? "review"
+        : "clear";
+    const guardianLabel =
+      guardianStatus === "limit"
+        ? "DAILY LIMIT REACHED"
+        : guardianStatus === "review"
+          ? "REVIEW REQUIRED"
+          : "WITHIN LIMITS";
     const recent = [...trades]
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 5);
@@ -1067,10 +1105,10 @@ function App() {
         <div className="welcome-row">
           <div>
             <div className="eyebrow">
-              <span className="eyebrow-dot" /> WEDNESDAY · MARKET PREP
+              <span className="eyebrow-dot" /> {weekdayLabel} · MARKET PREP
             </div>
             <h1>
-              Good morning, Alex<span className="heading-period">.</span>
+              {greeting}, {traderName}<span className="heading-period">.</span>
             </h1>
             <p className="page-intro">
               {dayLabel}{" "}
@@ -1080,7 +1118,7 @@ function App() {
           </div>
           <div className="welcome-actions">
             <span className="sample-data-label">
-              <span /> DEMO WORKSPACE
+              <span /> {cloudUser ? "CLOUD WORKSPACE" : "DEMO WORKSPACE"}
             </span>
             <button
               className="button button-primary"
@@ -1173,6 +1211,74 @@ function App() {
             color="olive"
           />
         </div>
+        <Panel className={`risk-guardian-panel risk-guardian-${guardianStatus}`}>
+          <PanelHeading
+            title="Risk guardian"
+            subtitle="Daily loss, critical controls and simulated exposure"
+            action={
+              <span className={`guardian-status guardian-status-${guardianStatus}`}>
+                <span />
+                {guardianLabel}
+              </span>
+            }
+          />
+          <div className="guardian-grid">
+            <div className="guardian-loss">
+              <div className="guardian-stat-heading">
+                <span>Daily loss limit</span>
+                <strong>
+                  {currency(dashboardDailyLoss)} <small>/ {currency(dashboardLossLimit)}</small>
+                </strong>
+              </div>
+              <div className="guardian-meter">
+                <span
+                  className={dashboardLossPct >= 70 ? "guardian-meter-warn" : ""}
+                  style={{ width: `${dashboardLossPct}%` }}
+                />
+              </div>
+              <div className="guardian-stat-foot">
+                <span>
+                  {dashboardLossLimit > 0
+                    ? `${currency(Math.max(0, dashboardLossLimit - dashboardDailyLoss))} remaining`
+                    : "Set a daily loss limit"}
+                </span>
+                <span>{dashboardLossPct.toFixed(0)}% used</span>
+              </div>
+            </div>
+            <div className="guardian-stat">
+              <span>Critical checks</span>
+              <strong>{criticalChecksRemaining}</strong>
+              <small>
+                {criticalChecksRemaining === 1 ? "item needs review" : "items need review"}
+              </small>
+            </div>
+            <div className="guardian-stat">
+              <span>Paper positions</span>
+              <strong>
+                {paper.length}<small> / {riskSettings.maxPositions}</small>
+              </strong>
+              <small>
+                {positionsAtCapacity
+                  ? "Capacity reached"
+                  : `${riskSettings.maxPositions - paper.length} slots available`}
+              </small>
+            </div>
+          </div>
+          <div className="guardian-footer">
+            <span>
+              <ShieldAlert size={14} />
+              Paper exposure only. Live broker execution and automatic lockout are not connected.
+            </span>
+            <div>
+              <button className="text-button" onClick={() => setActive("rules")}>
+                Review checks <ArrowRight size={13} />
+              </button>
+              <button className="text-button" onClick={() => setActive("risk")}>
+                Risk settings <ArrowRight size={13} />
+              </button>
+            </div>
+          </div>
+        </Panel>
         <div className="dashboard-grid">
           <Panel className="equity-panel">
             <PanelHeading
@@ -3695,11 +3801,13 @@ function App() {
           </button>
         </div>
         <div className="workspace-select">
-          <span className="workspace-avatar">A</span>
+          <span className="workspace-avatar">
+            {cloudUser ? traderName.slice(0, 1).toUpperCase() : "P"}
+          </span>
           <div>
-            <strong>Alex’s workspace</strong>
+            <strong>{cloudUser ? `${traderName}’s workspace` : "Personal workspace"}</strong>
             <span>
-              Personal desk <ChevronDown size={13} />
+              {cloudUser ? "Cloud workspace" : "Private desk"} <ChevronDown size={13} />
             </span>
           </div>
           <MoreHorizontal size={18} />
@@ -3742,10 +3850,10 @@ function App() {
         </div>
         <div className="sidebar-user">
           <span className="user-avatar">
-            {cloudUser?.email?.slice(0, 1).toUpperCase() ?? "A"}
+            {cloudUser?.email?.slice(0, 1).toUpperCase() ?? "T"}
           </span>
           <div>
-            <strong>{cloudUser?.email ?? "Alex Morgan"}</strong>
+            <strong>{cloudUser?.email ?? "Local trader"}</strong>
             <span>
               {cloudUser
                 ? "Cloud sync active"
