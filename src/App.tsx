@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -62,6 +63,7 @@ import {
   YAxis,
 } from "recharts";
 import { format, isThisMonth, isThisWeek, parseISO, subDays } from "date-fns";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
   currency,
   formatPrice,
@@ -93,6 +95,14 @@ import {
   type CloudUser,
   type CloudWorkspace,
 } from "./lib/supabase";
+import {
+  AuthPage,
+  LandingPage,
+  OnboardingPage,
+  type AccountProfile,
+  type AccountResult,
+  type AuthMode,
+} from "./PublicPages";
 import "./App.css";
 
 type ModuleId =
@@ -186,27 +196,105 @@ const chartTooltipStyle = {
   color: "#393a35",
 };
 
+function readPersistedValue<T>(key: string, initial: T): T {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? (JSON.parse(stored) as T) : initial;
+  } catch {
+    return initial;
+  }
+}
+
+const persistedValueCache = new Map<string, unknown>();
+const persistedSubscribers = new Map<string, Set<() => void>>();
+
+function getPersistedValue<T>(key: string, initial: T): T {
+  if (!persistedValueCache.has(key)) {
+    persistedValueCache.set(key, readPersistedValue(key, initial));
+  }
+  return persistedValueCache.get(key) as T;
+}
+
+function subscribePersistedValue(key: string, listener: () => void) {
+  const listeners = persistedSubscribers.get(key) ?? new Set<() => void>();
+  listeners.add(listener);
+  persistedSubscribers.set(key, listeners);
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key !== key && event.key !== null) return;
+    persistedValueCache.delete(key);
+    listeners.forEach((subscriber) => subscriber());
+  };
+  window.addEventListener("storage", handleStorage);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", handleStorage);
+    if (!listeners.size) persistedSubscribers.delete(key);
+  };
+}
+
+function updatePersistedValue<T>(
+  key: string,
+  initial: T,
+  next: T | ((current: T) => T),
+) {
+  const current = getPersistedValue(key, initial);
+  const value =
+    typeof next === "function" ? (next as (current: T) => T)(current) : next;
+  persistedValueCache.set(key, value);
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* Storage may be disabled; keep the current session in memory. */
+  }
+  persistedSubscribers.get(key)?.forEach((listener) => listener());
+}
+
 function usePersisted<T>(
   key: string,
   initial: T,
+  scope = "guest",
 ): [T, (next: T | ((current: T) => T)) => void] {
-  const [value, setValue] = useState<T>(() => {
-    try {
-      const stored = localStorage.getItem(key);
-      return stored ? (JSON.parse(stored) as T) : initial;
-    } catch {
-      return initial;
-    }
-  });
-  useEffect(() => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      /* Storage may be disabled. */
-    }
-  }, [key, value]);
+  const scopedKey = scope === "guest" ? key : `${key}.user.${scope}`;
+  const subscribe = useCallback(
+    (listener: () => void) => subscribePersistedValue(scopedKey, listener),
+    [scopedKey],
+  );
+  const getSnapshot = useCallback(
+    () => getPersistedValue(scopedKey, initial),
+    [initial, scopedKey],
+  );
+  const setValue = useCallback(
+    (next: T | ((current: T) => T)) => {
+      updatePersistedValue(scopedKey, initial, next);
+    },
+    [initial, scopedKey],
+  );
+  const value = useSyncExternalStore(subscribe, getSnapshot, () => initial);
   return [value, setValue];
 }
+
+const EMPTY_TRADES: JournalTrade[] = [];
+const EMPTY_PAPER_POSITIONS: PaperPosition[] = [];
+const EMPTY_BACKTESTS: BacktestSummary[] = [];
+const EMPTY_STRINGS: string[] = [];
+const initialDemoTrades = makeSampleTrades();
+const initialDemoPaper = makeInitialPaperPositions();
+const initialChecks = Object.fromEntries(
+  initialRules.map((rule, index) => [rule.id, index !== 2 && index !== 7]),
+);
+const initialPlanNotes = [
+  "Map weekly and daily swing ranges, relevant supply / demand zones, and liquidity sweeps or pools.",
+  "On 4H, map the current swing range and premium / discount, then refine zones and liquidity.",
+  "On M15, establish immediate bias. Wait for higher-timeframe point-of-interest mitigation.",
+  "Use M1 only after M15 mitigation. Take a documented Entry Model 1–4 and follow the management plan.",
+];
+const initialRiskSettings = {
+  balance: 25000,
+  riskPct: 0.5,
+  dailyLossPct: 2,
+  maxPositions: 3,
+  stopValue: 10,
+};
 
 function mean(values: number[]): number {
   return values.length
@@ -550,47 +638,62 @@ function ChartEmpty({ message }: { message: string }) {
 }
 
 function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const routePath = location.pathname.replace(/\/$/, "") || "/";
   const [active, setActive] = useState<ModuleId>("dashboard");
+  const [cloudUser, setCloudUser] = useState<CloudUser | null>(null);
+  const [cloudLoadStatus, setCloudLoadStatus] = useState<
+    "loading" | "ready" | "error"
+  >(supabase ? "loading" : "ready");
+  const [cloudLoadAttempt, setCloudLoadAttempt] = useState(0);
+  const [sessionRestoreAttempt, setSessionRestoreAttempt] = useState(0);
+  const storageScope = cloudUser?.id ?? "guest";
   const [trades, setTrades] = usePersisted<JournalTrade[]>(
     "aperture.trades",
-    makeSampleTrades(),
+    cloudUser ? EMPTY_TRADES : initialDemoTrades,
+    storageScope,
   );
   const [paper, setPaper] = usePersisted<PaperPosition[]>(
     "aperture.paper",
-    makeInitialPaperPositions(),
+    cloudUser ? EMPTY_PAPER_POSITIONS : initialDemoPaper,
+    storageScope,
   );
   const [rules, setRules] = usePersisted<TradingRule[]>(
     "aperture.rules",
     initialRules,
+    storageScope,
   );
   const [goals, setGoals] = usePersisted<Goal[]>(
     "aperture.goals",
     initialGoals,
+    storageScope,
   );
   const [checks, setChecks] = usePersisted<Record<string, boolean>>(
     "aperture.checks",
-    Object.fromEntries(
-      initialRules.map((rule, index) => [rule.id, index !== 2 && index !== 7]),
-    ),
+    initialChecks,
+    storageScope,
   );
-  const [planNotes, setPlanNotes] = usePersisted<string[]>("aperture.plan", [
-    "Map weekly and daily swing ranges, relevant supply / demand zones, and liquidity sweeps or pools.",
-    "On 4H, map the current swing range and premium / discount, then refine zones and liquidity.",
-    "On M15, establish immediate bias. Wait for higher-timeframe point-of-interest mitigation.",
-    "Use M1 only after M15 mitigation. Take a documented Entry Model 1–4 and follow the management plan.",
-  ]);
+  const [planNotes, setPlanNotes] = usePersisted<string[]>(
+    "aperture.plan",
+    initialPlanNotes,
+    storageScope,
+  );
   const [savedRuns, setSavedRuns] = usePersisted<BacktestSummary[]>(
     "aperture.backtests",
-    [],
+    EMPTY_BACKTESTS,
+    storageScope,
   );
-  const [reviews, setReviews] = usePersisted<number>("aperture.reviews", 3);
-  const [riskSettings, setRiskSettings] = usePersisted("aperture.risk", {
-    balance: 25000,
-    riskPct: 0.5,
-    dailyLossPct: 2,
-    maxPositions: 3,
-    stopValue: 10,
-  });
+  const [reviews, setReviews] = usePersisted<number>(
+    "aperture.reviews",
+    3,
+    storageScope,
+  );
+  const [riskSettings, setRiskSettings] = usePersisted(
+    "aperture.risk",
+    initialRiskSettings,
+    storageScope,
+  );
   const [stopDistance, setStopDistance] = useState(25);
   const [activeInstrument, setActiveInstrument] = useState("EUR/USD");
   const [indicator, setIndicator] = useState<Indicator>("MA crossover");
@@ -603,21 +706,18 @@ function App() {
   const [traderType, setTraderType] = usePersisted(
     "aperture.traderType",
     "Swing trader",
+    storageScope,
   );
   const [marketStep, setMarketStep] = useState(0);
   const [timeFilter, setTimeFilter] = useState("All trades");
   const [searchTerm, setSearchTerm] = useState("");
   const [noTradeEvents, setNoTradeEvents] = usePersisted<string[]>(
     "aperture.noTradeEvents",
-    [],
-  );
-  const [cloudUser, setCloudUser] = useState<CloudUser | null>(null);
-  const [authOpen, setAuthOpen] = useState(false);
-  const [authMode, setAuthMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const [cloudLoadStatus, setCloudLoadStatus] = useState<"loading" | "ready">(
-    supabase ? "loading" : "ready",
+    EMPTY_STRINGS,
+    storageScope,
   );
   const lastSyncedSnapshotRef = useRef<string | null>(null);
+  const activeCloudUserIdRef = useRef<string | null>(null);
   const [today] = useState(() => format(new Date(), "yyyy-MM-dd"));
   const [currentTime] = useState(() => format(new Date(), "HH:mm"));
   const [dayLabel] = useState(() => format(new Date(), "EEEE, MMMM d"));
@@ -639,8 +739,6 @@ function App() {
       : Number(currentTime.slice(0, 2)) < 17
         ? "Good afternoon"
         : "Good evening";
-  const cloudReady = !supabase || !cloudUser || cloudLoadStatus === "ready";
-
   const [backtest, setBacktest] = useState<BacktestResult>(() =>
     runBacktest(
       "EUR/USD",
@@ -678,26 +776,128 @@ function App() {
   useEffect(() => {
     if (!supabase) return;
     let mounted = true;
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setCloudUser(data.session?.user ?? null);
-      if (!data.session) setCloudLoadStatus("ready");
-    });
+    let authEventReceived = false;
+    const applySessionUser = (user: CloudUser | null) => {
+      const userId = user?.id ?? null;
+      if (activeCloudUserIdRef.current !== userId || !userId) {
+        activeCloudUserIdRef.current = userId;
+        lastSyncedSnapshotRef.current = null;
+        setCloudLoadStatus(user ? "loading" : "ready");
+      }
+      setCloudUser(user);
+    };
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCloudUser(session?.user ?? null);
-      if (!session) setCloudLoadStatus("ready");
+      authEventReceived = true;
+      applySessionUser(session?.user ?? null);
+    });
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (!mounted || authEventReceived) return;
+      if (error) {
+        setCloudLoadStatus("error");
+        return;
+      }
+      applySessionUser(data.session?.user ?? null);
+    }).catch(() => {
+      if (mounted && !authEventReceived) setCloudLoadStatus("error");
     });
     return () => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [sessionRestoreAttempt]);
 
   const notify = useCallback((message: string) => {
     setToast(message);
-  }, []);
+  }, [setToast]);
+
+  async function handleSignIn(email: string, password: string): Promise<AccountResult> {
+    if (!supabase) return { error: "Account service is not configured." };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return { error: error.message };
+    const needsOnboarding = data.user.user_metadata?.onboarding_complete !== true;
+    navigate(needsOnboarding ? "/onboarding" : "/app", { replace: true });
+    return {};
+  }
+
+  async function handleSignUp(
+    displayName: string,
+    email: string,
+    password: string,
+  ): Promise<AccountResult> {
+    if (!supabase) return { error: "Account service is not configured." };
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: displayName,
+          trader_type: "Swing trader",
+          onboarding_complete: false,
+        },
+        emailRedirectTo: `${window.location.origin}/onboarding`,
+      },
+    });
+    if (error) return { error: error.message };
+    if (data.session) {
+      navigate("/onboarding", { replace: true });
+      return {};
+    }
+    return { message: "Account created. Check your email to confirm your address, then return here to sign in." };
+  }
+
+  async function handlePasswordResetRequest(email: string): Promise<AccountResult> {
+    if (!supabase) return { error: "Account service is not configured." };
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/new-password`,
+    });
+    if (error) return { error: error.message };
+    return { message: "If an account exists for that address, a password reset link is on its way." };
+  }
+
+  async function handlePasswordUpdate(password: string): Promise<AccountResult> {
+    if (!supabase) return { error: "Account service is not configured." };
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) return { error: error.message };
+    navigate(cloudUser?.user_metadata?.onboarding_complete ? "/app" : "/onboarding", {
+      replace: true,
+    });
+    return { message: "Password updated." };
+  }
+
+  async function handleOnboardingComplete(profile: AccountProfile): Promise<AccountResult> {
+    if (!supabase || !cloudUser) return { error: "Sign in to finish account setup." };
+    if (profile.importGuestWorkspace) {
+      setTrades(getPersistedValue("aperture.trades", initialDemoTrades));
+      setPaper(getPersistedValue("aperture.paper", initialDemoPaper));
+      setRules(getPersistedValue("aperture.rules", initialRules));
+      setGoals(getPersistedValue("aperture.goals", initialGoals));
+      setChecks(getPersistedValue("aperture.checks", initialChecks));
+      setPlanNotes(getPersistedValue("aperture.plan", initialPlanNotes));
+      setSavedRuns(getPersistedValue("aperture.backtests", EMPTY_BACKTESTS));
+      setReviews(getPersistedValue("aperture.reviews", 3));
+      setNoTradeEvents(getPersistedValue("aperture.noTradeEvents", EMPTY_STRINGS));
+    }
+    setRiskSettings((current) => ({
+      ...current,
+      balance: profile.balance,
+      riskPct: profile.riskPct,
+      dailyLossPct: profile.dailyLossPct,
+    }));
+    setTraderType(profile.traderType);
+    const { data, error } = await supabase.auth.updateUser({
+      data: {
+        full_name: profile.displayName,
+        trader_type: profile.traderType,
+        onboarding_complete: true,
+      },
+    });
+    if (error) return { error: error.message };
+    setCloudUser(data.user);
+    navigate("/app", { replace: true });
+    return {};
+  }
 
   useEffect(() => {
     if (!cloudUser || !supabase) return;
@@ -723,7 +923,7 @@ function App() {
       })
       .catch((error: Error) => {
         if (mounted) {
-          setCloudLoadStatus("ready");
+          setCloudLoadStatus("error");
           notify(`Cloud load failed: ${error.message}`);
         }
       });
@@ -731,6 +931,7 @@ function App() {
       mounted = false;
     };
   }, [
+    cloudLoadAttempt,
     cloudUser,
     notify,
     setTrades,
@@ -746,7 +947,7 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (!cloudUser || !cloudReady || cloudLoadStatus !== "ready") return;
+    if (!cloudUser || cloudLoadStatus !== "ready") return;
     const workspace: CloudWorkspace = {
       trades,
       paper,
@@ -770,7 +971,6 @@ function App() {
     return () => window.clearTimeout(timeout);
   }, [
     cloudUser,
-    cloudReady,
     cloudLoadStatus,
     trades,
     paper,
@@ -971,28 +1171,6 @@ function App() {
     setChecks((current) => ({ ...current, [id]: !current[id] }));
   }
 
-  async function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!supabase) {
-      notify("Add Supabase credentials to enable cloud sync");
-      return;
-    }
-    const form = new FormData(event.currentTarget);
-    const email = String(form.get("email") ?? "");
-    const password = String(form.get("password") ?? "");
-    const { error } =
-      authMode === "sign-in"
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-    if (error) {
-      notify(error.message);
-      return;
-    }
-    if (authMode === "sign-up")
-      notify("Account created · check email if confirmation is enabled");
-    else notify("Signed in · workspace cloud sync is active");
-    setAuthOpen(false);
-  }
   function metricForGoal(goal: Goal): number {
     if (goal.metric === "trades") return trades.length;
     if (goal.metric === "win-rate") return Math.round(stats.winRate);
@@ -3779,6 +3957,133 @@ function App() {
     return renderSessions();
   }
 
+  if (supabase && cloudLoadStatus === "loading") {
+    return (
+      <div className="account-state-screen" role="status" aria-live="polite">
+        <div className="account-state-panel">
+          <span className="account-state-mark"><RefreshCw size={18} /></span>
+          <h1>Loading your private workspace</h1>
+          <p>Restoring your account and checking its saved trading data.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const onboardingComplete = cloudUser?.user_metadata?.onboarding_complete === true;
+  const isAuthRecovery = routePath === "/auth/new-password";
+  const authModeFromQuery: AuthMode =
+    new URLSearchParams(location.search).get("mode") === "sign-up"
+      ? "sign-up"
+      : "sign-in";
+
+  if (cloudUser && cloudLoadStatus === "error") {
+    return (
+      <div className="account-state-screen">
+        <div className="account-state-panel">
+          <span className="account-state-mark account-state-error"><CloudOff size={18} /></span>
+          <h1>Workspace sync paused</h1>
+          <p>Your cloud data could not be loaded. Local account data has not been sent.</p>
+          <div className="account-state-actions">
+            <button
+              className="button button-primary"
+              onClick={() => {
+                setCloudLoadStatus("loading");
+                setCloudLoadAttempt((attempt) => attempt + 1);
+              }}
+            >
+              <RefreshCw size={14} /> Retry
+            </button>
+            <button className="button button-secondary" onClick={() => void supabase?.auth.signOut()}>
+              Sign out
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (supabase && cloudLoadStatus === "error" && !cloudUser) {
+    return (
+      <div className="account-state-screen">
+        <div className="account-state-panel">
+          <span className="account-state-mark account-state-error"><CloudOff size={18} /></span>
+          <h1>Could not restore your session</h1>
+          <p>Your browser session could not be checked. Retry before opening an account workspace.</p>
+          <div className="account-state-actions">
+            <button
+              className="button button-primary"
+              onClick={() => {
+                setCloudLoadStatus("loading");
+                setSessionRestoreAttempt((attempt) => attempt + 1);
+              }}
+            >
+              <RefreshCw size={14} /> Retry
+            </button>
+            <button className="button button-secondary" onClick={() => navigate("/demo")}>
+              Open sample workspace
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cloudUser && routePath === "/") {
+    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
+  }
+  if (cloudUser && routePath.startsWith("/auth") && !isAuthRecovery) {
+    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
+  }
+  if (!cloudUser && (routePath === "/app" || routePath === "/onboarding")) {
+    return <Navigate to="/auth" replace />;
+  }
+  if (cloudUser && routePath === "/demo") {
+    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
+  }
+  if (routePath === "/") return <LandingPage configured={hasSupabaseConfig} />;
+  if (routePath === "/auth" || routePath === "/auth/reset" || isAuthRecovery) {
+    const initialMode: AuthMode = isAuthRecovery
+      ? "new-password"
+      : routePath === "/auth/reset"
+        ? "reset-request"
+        : authModeFromQuery;
+    return (
+      <AuthPage
+        key={`${routePath}${location.search}`}
+        configured={hasSupabaseConfig}
+        initialMode={initialMode}
+        onSignIn={handleSignIn}
+        onSignUp={handleSignUp}
+        onRequestPasswordReset={handlePasswordResetRequest}
+        onUpdatePassword={handlePasswordUpdate}
+      />
+    );
+  }
+  if (routePath === "/onboarding") {
+    if (!cloudUser) return <Navigate to="/auth?mode=sign-up" replace />;
+    return (
+      <OnboardingPage
+        initialName={traderName === "Trader" ? "" : traderName}
+        initialTraderType={
+          typeof cloudUser.user_metadata?.trader_type === "string"
+            ? cloudUser.user_metadata.trader_type
+            : traderType
+        }
+        initialBalance={riskSettings.balance}
+        initialRiskPct={riskSettings.riskPct}
+        initialDailyLossPct={riskSettings.dailyLossPct}
+        hasGuestWorkspace
+        onComplete={handleOnboardingComplete}
+      />
+    );
+  }
+  if (routePath === "/app" && cloudUser && !onboardingComplete) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  if (routePath !== "/app" && routePath !== "/demo") {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className={`app-shell ${darkMode ? "theme-dark" : ""}`}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
@@ -3864,9 +4169,9 @@ function App() {
           </div>
           <button
             className="icon-button subtle"
-            title={cloudUser ? "Sign out of cloud sync" : "Connect Supabase"}
+            title={cloudUser ? "Sign out" : "Sign in to a private account"}
             onClick={() =>
-              cloudUser ? void supabase?.auth.signOut() : setAuthOpen(true)
+              cloudUser ? void supabase?.auth.signOut() : navigate("/auth")
             }
           >
             {cloudUser ? (
@@ -3946,7 +4251,8 @@ function App() {
           </div>
           <footer className="app-footer">
             <span>
-              <span className="footer-dot" /> LOCAL DEMO DATA
+              <span className="footer-dot" />
+              {cloudUser ? "PRIVATE ACCOUNT" : "LOCAL DEMO DATA"}
             </span>
             <span>
               Plan-led trading workspace <i>·</i> Not financial advice
@@ -3966,15 +4272,6 @@ function App() {
           goalDeadline={_goalDeadlineDefault}
           onClose={() => setModal(null)}
           onSubmit={handleModalSubmit}
-        />
-      )}
-      {authOpen && (
-        <AuthModal
-          configured={hasSupabaseConfig}
-          mode={authMode}
-          onModeChange={setAuthMode}
-          onClose={() => setAuthOpen(false)}
-          onSubmit={handleAuthSubmit}
         />
       )}
       {toast && (
@@ -4637,111 +4934,6 @@ function TradeModal({
             </button>
           </div>
         </form>
-      </section>
-    </div>
-  );
-}
-
-function AuthModal({
-  configured,
-  mode,
-  onModeChange,
-  onClose,
-  onSubmit,
-}: {
-  configured: boolean;
-  mode: "sign-in" | "sign-up";
-  onModeChange: (mode: "sign-in" | "sign-up") => void;
-  onClose: () => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  return (
-    <div
-      className="modal-scrim"
-      onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
-      }}
-    >
-      <section
-        className="modal-panel auth-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="auth-title"
-      >
-        <div className="modal-heading">
-          <div>
-            <span className="eyebrow">
-              <span className="eyebrow-dot" /> WORKSPACE SYNC
-            </span>
-            <h2 id="auth-title">
-              {configured
-                ? mode === "sign-in"
-                  ? "Connect your workspace"
-                  : "Create a workspace account"
-                : "Local workspace"}
-            </h2>
-            <p>
-              {configured
-                ? "Sign in to securely sync your journal, settings and goals."
-                : "Your data is stored in this browser until Supabase is configured."}
-            </p>
-          </div>
-          <button
-            className="icon-button"
-            title="Close dialog"
-            onClick={onClose}
-          >
-            <X size={18} />
-          </button>
-        </div>
-        {configured ? (
-          <form className="modal-form" onSubmit={onSubmit}>
-            <label>
-              <span>Email</span>
-              <input type="email" name="email" autoComplete="email" required />
-            </label>
-            <label>
-              <span>Password</span>
-              <input
-                type="password"
-                name="password"
-                autoComplete={
-                  mode === "sign-in" ? "current-password" : "new-password"
-                }
-                minLength={8}
-                required
-              />
-            </label>
-            <button className="button button-primary auth-submit" type="submit">
-              {mode === "sign-in" ? "Sign in & sync" : "Create account"}
-            </button>
-            <button
-              className="text-button auth-mode-toggle"
-              type="button"
-              onClick={() =>
-                onModeChange(mode === "sign-in" ? "sign-up" : "sign-in")
-              }
-            >
-              {mode === "sign-in"
-                ? "New here? Create an account"
-                : "Already have an account? Sign in"}
-            </button>
-          </form>
-        ) : (
-          <div className="local-mode-content">
-            <div>
-              <CloudOff size={19} />
-              <span>
-                No Supabase credentials detected. Create a local{" "}
-                <code>.env.local</code> from <code>.env.example</code>, add your
-                project URL and anon key, then restart the app.
-              </span>
-            </div>
-            <button className="button button-secondary" onClick={onClose}>
-              Continue locally
-            </button>
-          </div>
-        )}
       </section>
     </div>
   );
