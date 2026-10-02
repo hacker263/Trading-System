@@ -96,6 +96,12 @@ import {
   type CloudWorkspace,
 } from "./lib/supabase";
 import {
+  getScopedStorageKey,
+  readStoredValue,
+  writeStoredValue,
+} from "./lib/scopedStorage";
+import { resolveAccountRoute } from "./lib/accountRoutes";
+import {
   AuthPage,
   LandingPage,
   OnboardingPage,
@@ -197,12 +203,7 @@ const chartTooltipStyle = {
 };
 
 function readPersistedValue<T>(key: string, initial: T): T {
-  try {
-    const stored = localStorage.getItem(key);
-    return stored ? (JSON.parse(stored) as T) : initial;
-  } catch {
-    return initial;
-  }
+  return readStoredValue(localStorage, key, initial);
 }
 
 const persistedValueCache = new Map<string, unknown>();
@@ -241,11 +242,7 @@ function updatePersistedValue<T>(
   const value =
     typeof next === "function" ? (next as (current: T) => T)(current) : next;
   persistedValueCache.set(key, value);
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    /* Storage may be disabled; keep the current session in memory. */
-  }
+  writeStoredValue(localStorage, key, value);
   persistedSubscribers.get(key)?.forEach((listener) => listener());
 }
 
@@ -254,7 +251,7 @@ function usePersisted<T>(
   initial: T,
   scope = "guest",
 ): [T, (next: T | ((current: T) => T)) => void] {
-  const scopedKey = scope === "guest" ? key : `${key}.user.${scope}`;
+  const scopedKey = getScopedStorageKey(key, scope);
   const subscribe = useCallback(
     (listener: () => void) => subscribePersistedValue(scopedKey, listener),
     [scopedKey],
@@ -648,6 +645,11 @@ function App() {
   >(supabase ? "loading" : "ready");
   const [cloudLoadAttempt, setCloudLoadAttempt] = useState(0);
   const [sessionRestoreAttempt, setSessionRestoreAttempt] = useState(0);
+  const [cloudSyncAttempt, setCloudSyncAttempt] = useState(0);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<
+    "idle" | "syncing" | "synced" | "error"
+  >("idle");
+  const cloudUserId = cloudUser?.id;
   const storageScope = cloudUser?.id ?? "guest";
   const [trades, setTrades] = usePersisted<JournalTrade[]>(
     "aperture.trades",
@@ -782,6 +784,7 @@ function App() {
       if (activeCloudUserIdRef.current !== userId || !userId) {
         activeCloudUserIdRef.current = userId;
         lastSyncedSnapshotRef.current = null;
+        setCloudSyncStatus("idle");
         setCloudLoadStatus(user ? "loading" : "ready");
       }
       setCloudUser(user);
@@ -900,10 +903,10 @@ function App() {
   }
 
   useEffect(() => {
-    if (!cloudUser || !supabase) return;
+    if (!cloudUserId || !supabase) return;
     let mounted = true;
     lastSyncedSnapshotRef.current = null;
-    void loadCloudWorkspace(cloudUser.id)
+    void loadCloudWorkspace(cloudUserId)
       .then((workspace) => {
         if (!mounted) return;
         if (workspace) {
@@ -918,6 +921,7 @@ function App() {
           setTraderType(workspace.traderType);
           setReviews(workspace.reviews);
           lastSyncedSnapshotRef.current = JSON.stringify(workspace);
+          setCloudSyncStatus("synced");
         }
         setCloudLoadStatus("ready");
       })
@@ -932,7 +936,7 @@ function App() {
     };
   }, [
     cloudLoadAttempt,
-    cloudUser,
+    cloudUserId,
     notify,
     setTrades,
     setPaper,
@@ -947,7 +951,7 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (!cloudUser || cloudLoadStatus !== "ready") return;
+    if (!cloudUserId || cloudLoadStatus !== "ready") return;
     const workspace: CloudWorkspace = {
       trades,
       paper,
@@ -961,17 +965,32 @@ function App() {
       reviews,
     };
     const snapshot = JSON.stringify(workspace);
-    if (lastSyncedSnapshotRef.current === snapshot) return;
+    if (lastSyncedSnapshotRef.current === snapshot) {
+      setCloudSyncStatus("synced");
+      return;
+    }
     lastSyncedSnapshotRef.current = snapshot;
+    const syncingUserId = cloudUserId;
+    setCloudSyncStatus("syncing");
     const timeout = window.setTimeout(() => {
-      void syncCloudWorkspace(cloudUser.id, workspace).catch((error: Error) =>
-        notify(`Cloud sync failed: ${error.message}`),
-      );
+      void syncCloudWorkspace(syncingUserId, workspace)
+        .then(() => {
+          if (activeCloudUserIdRef.current === syncingUserId) {
+            setCloudSyncStatus("synced");
+          }
+        })
+        .catch((error: Error) => {
+          if (activeCloudUserIdRef.current !== syncingUserId) return;
+          lastSyncedSnapshotRef.current = null;
+          setCloudSyncStatus("error");
+          notify(`Cloud sync failed: ${error.message}`);
+        });
     }, 900);
     return () => window.clearTimeout(timeout);
   }, [
-    cloudUser,
+    cloudUserId,
     cloudLoadStatus,
+    cloudSyncAttempt,
     trades,
     paper,
     rules,
@@ -3957,7 +3976,7 @@ function App() {
     return renderSessions();
   }
 
-  if (supabase && cloudLoadStatus === "loading") {
+  if (supabase && cloudLoadStatus === "loading" && routePath !== "/") {
     return (
       <div className="account-state-screen" role="status" aria-live="polite">
         <div className="account-state-panel">
@@ -3970,7 +3989,12 @@ function App() {
   }
 
   const onboardingComplete = cloudUser?.user_metadata?.onboarding_complete === true;
-  const isAuthRecovery = routePath === "/auth/new-password";
+  const routeDecision = resolveAccountRoute(
+    routePath,
+    Boolean(cloudUser),
+    onboardingComplete,
+  );
+  const isAuthRecovery = routeDecision === "recovery";
   const authModeFromQuery: AuthMode =
     new URLSearchParams(location.search).get("mode") === "sign-up"
       ? "sign-up"
@@ -4028,20 +4052,14 @@ function App() {
     );
   }
 
-  if (cloudUser && routePath === "/") {
-    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
+  if (routeDecision === "redirect-auth") return <Navigate to="/auth" replace />;
+  if (routeDecision === "redirect-landing") return <Navigate to="/" replace />;
+  if (routeDecision === "redirect-app") return <Navigate to="/app" replace />;
+  if (routeDecision === "redirect-onboarding") {
+    return <Navigate to="/onboarding" replace />;
   }
-  if (cloudUser && routePath.startsWith("/auth") && !isAuthRecovery) {
-    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
-  }
-  if (!cloudUser && (routePath === "/app" || routePath === "/onboarding")) {
-    return <Navigate to="/auth" replace />;
-  }
-  if (cloudUser && routePath === "/demo") {
-    return <Navigate to={onboardingComplete ? "/app" : "/onboarding"} replace />;
-  }
-  if (routePath === "/") return <LandingPage configured={hasSupabaseConfig} />;
-  if (routePath === "/auth" || routePath === "/auth/reset" || isAuthRecovery) {
+  if (routeDecision === "landing") return <LandingPage configured={hasSupabaseConfig} />;
+  if (routeDecision === "auth" || routeDecision === "recovery") {
     const initialMode: AuthMode = isAuthRecovery
       ? "new-password"
       : routePath === "/auth/reset"
@@ -4059,7 +4077,7 @@ function App() {
       />
     );
   }
-  if (routePath === "/onboarding") {
+  if (routeDecision === "onboarding") {
     if (!cloudUser) return <Navigate to="/auth?mode=sign-up" replace />;
     return (
       <OnboardingPage
@@ -4077,13 +4095,6 @@ function App() {
       />
     );
   }
-  if (routePath === "/app" && cloudUser && !onboardingComplete) {
-    return <Navigate to="/onboarding" replace />;
-  }
-  if (routePath !== "/app" && routePath !== "/demo") {
-    return <Navigate to="/" replace />;
-  }
-
   return (
     <div className={`app-shell ${darkMode ? "theme-dark" : ""}`}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
@@ -4161,12 +4172,32 @@ function App() {
             <strong>{cloudUser?.email ?? "Local trader"}</strong>
             <span>
               {cloudUser
-                ? "Cloud sync active"
+                ? cloudSyncStatus === "syncing"
+                  ? "Syncing changes…"
+                  : cloudSyncStatus === "error"
+                    ? "Sync paused · retry needed"
+                    : cloudSyncStatus === "synced"
+                      ? "Cloud sync active"
+                      : "Checking cloud sync"
                 : hasSupabaseConfig
                   ? "Local · click to connect"
                   : "Local demo workspace"}
             </span>
           </div>
+          {cloudUser && cloudSyncStatus === "error" && (
+            <button
+              className="icon-button subtle"
+              title="Retry cloud sync"
+              aria-label="Retry cloud sync"
+              onClick={() => {
+                lastSyncedSnapshotRef.current = null;
+                setCloudSyncStatus("idle");
+                setCloudSyncAttempt((attempt) => attempt + 1);
+              }}
+            >
+              <RefreshCw size={15} />
+            </button>
+          )}
           <button
             className="icon-button subtle"
             title={cloudUser ? "Sign out" : "Sign in to a private account"}
