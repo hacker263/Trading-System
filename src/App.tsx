@@ -23,7 +23,9 @@ import {
   Cloud,
   CloudOff,
   Download,
+  BriefcaseBusiness,
   FlaskConical,
+  GraduationCap,
   Gauge,
   ListChecks,
   Menu,
@@ -102,6 +104,11 @@ import {
 } from "./lib/scopedStorage";
 import { resolveAccountRoute } from "./lib/accountRoutes";
 import {
+  LocalModulePage,
+  type LocalModuleId,
+  type LocalModuleState,
+} from "./LocalModules";
+import {
   AuthPage,
   LandingPage,
   OnboardingPage,
@@ -121,7 +128,8 @@ type ModuleId =
   | "rules"
   | "risk"
   | "analytics"
-  | "sessions";
+  | "sessions"
+  | LocalModuleId;
 type Indicator =
   "MA crossover" | "RSI reversal" | "MACD crossover" | "Range breakout";
 type BacktestTrade = {
@@ -159,6 +167,13 @@ const navItems: {
   { id: "forward", label: "Forward test", icon: Radio, group: "Workspace" },
   { id: "journal", label: "Trade journal", icon: NotebookPen, group: "Review" },
   { id: "goals", label: "Goals", icon: Target, group: "Review" },
+  { id: "insights", label: "Pattern insights", icon: Sparkles, group: "Review" },
+  { id: "weekly-reviews", label: "Weekly reviews", icon: CalendarDays, group: "Review" },
+  { id: "setups", label: "Trading setups", icon: Target, group: "Research" },
+  { id: "strategy-tests", label: "Strategy testing", icon: FlaskConical, group: "Research" },
+  { id: "resources", label: "Resources", icon: BookOpen, group: "Research" },
+  { id: "notes", label: "Notes", icon: NotebookPen, group: "Research" },
+  { id: "study", label: "Study materials", icon: GraduationCap, group: "Research" },
   {
     id: "rules",
     label: "Rules & checklist",
@@ -166,6 +181,7 @@ const navItems: {
     group: "Control",
   },
   { id: "risk", label: "Risk management", icon: ShieldCheck, group: "Control" },
+  { id: "account-tools", label: "Brokers & charting", icon: BriefcaseBusiness, group: "Control" },
   { id: "analytics", label: "Analytics", icon: Activity, group: "Review" },
   {
     id: "sessions",
@@ -186,7 +202,37 @@ const pageDescriptions: Record<ModuleId, string> = {
   risk: "Size positions from invalidation, then keep daily exposure in view.",
   analytics: "Compare what the plan expects with what your decisions deliver.",
   sessions: "Put session context and scheduled event risk on the same clock.",
+  insights: "Review patterns from your recorded outcomes; descriptive, not predictive.",
+  "weekly-reviews": "Turn journal results into a consistent weekly process review.",
+  setups: "Document setups from the plan and compare them with journal evidence.",
+  "strategy-tests": "Organize local backtest and forward-test sessions with trade logs.",
+  resources: "Keep research references and learning links in one searchable library.",
+  notes: "Capture private market observations and lessons from your process.",
+  study: "Track books, courses, and other material used to develop your process.",
+  "account-tools": "Keep non-sensitive broker and charting references for your own use.",
 };
+
+const initialLocalModules: LocalModuleState = {
+  setups: [],
+  testSessions: [],
+  resources: [],
+  notes: [],
+  studyItems: [],
+  brokers: [],
+  chartingTools: [],
+  weeklyReviews: [],
+};
+
+const localModuleIds: LocalModuleId[] = [
+  "insights",
+  "setups",
+  "strategy-tests",
+  "resources",
+  "notes",
+  "study",
+  "account-tools",
+  "weekly-reviews",
+];
 
 const sessionColors: Record<string, string> = {
   Asia: "#81958b",
@@ -718,6 +764,14 @@ function App() {
     EMPTY_STRINGS,
     storageScope,
   );
+  const [localModuleData, setLocalModuleData] = usePersisted<LocalModuleState>(
+    "aperture.localModules",
+    initialLocalModules,
+    storageScope,
+  );
+  const setupOptions = [
+    ...new Set([...setupNames, ...localModuleData.setups.map((setup) => setup.name)]),
+  ];
   const lastSyncedSnapshotRef = useRef<string | null>(null);
   const activeCloudUserIdRef = useRef<string | null>(null);
   const [today] = useState(() => format(new Date(), "yyyy-MM-dd"));
@@ -881,6 +935,9 @@ function App() {
       setSavedRuns(getPersistedValue("aperture.backtests", EMPTY_BACKTESTS));
       setReviews(getPersistedValue("aperture.reviews", 3));
       setNoTradeEvents(getPersistedValue("aperture.noTradeEvents", EMPTY_STRINGS));
+      setLocalModuleData(
+        getPersistedValue("aperture.localModules", initialLocalModules),
+      );
     }
     setRiskSettings((current) => ({
       ...current,
@@ -3973,7 +4030,22 @@ function App() {
     if (active === "rules") return renderRules();
     if (active === "risk") return renderRisk();
     if (active === "analytics") return renderAnalytics();
-    return renderSessions();
+    if (active === "sessions") return renderSessions();
+    if (localModuleIds.includes(active as LocalModuleId)) {
+      return (
+        <LocalModulePage
+          page={active as LocalModuleId}
+          data={localModuleData}
+          trades={trades}
+          backtests={savedRuns}
+          goals={goals}
+          rules={rules}
+          onChange={setLocalModuleData}
+          onNavigate={setActive}
+        />
+      );
+    }
+    return renderDashboard();
   }
 
   if (supabase && cloudLoadStatus === "loading" && routePath !== "/") {
@@ -4128,7 +4200,7 @@ function App() {
           </div>
           <MoreHorizontal size={18} />
         </div>
-        {["Workspace", "Review", "Control"].map((group) => (
+        {["Workspace", "Review", "Research", "Control"].map((group) => (
           <div className="nav-group" key={group}>
             <span className="nav-label">{group}</span>
             {navItems
@@ -4173,12 +4245,12 @@ function App() {
             <span>
               {cloudUser
                 ? cloudSyncStatus === "syncing"
-                  ? "Syncing changes…"
+                  ? "Syncing core records…"
                   : cloudSyncStatus === "error"
-                    ? "Sync paused · retry needed"
+                    ? "Core sync paused · retry"
                     : cloudSyncStatus === "synced"
-                      ? "Cloud sync active"
-                      : "Checking cloud sync"
+                      ? "Core synced · research local"
+                      : "Checking core sync"
                 : hasSupabaseConfig
                   ? "Local · click to connect"
                   : "Local demo workspace"}
@@ -4283,7 +4355,7 @@ function App() {
           <footer className="app-footer">
             <span>
               <span className="footer-dot" />
-              {cloudUser ? "PRIVATE ACCOUNT" : "LOCAL DEMO DATA"}
+              {cloudUser ? "PRIVATE · CORE CLOUD · RESEARCH LOCAL" : "LOCAL DEMO DATA"}
             </span>
             <span>
               Plan-led trading workspace <i>·</i> Not financial advice
@@ -4297,6 +4369,7 @@ function App() {
       {modal && (
         <TradeModal
           type={modal}
+          setupOptions={setupOptions}
           paper={paper.find((item) => item.id === closingId)}
           defaultDate={today}
           defaultTime={currentTime}
@@ -4537,6 +4610,7 @@ function SessionBars({
 
 function TradeModal({
   type,
+  setupOptions,
   paper,
   defaultDate,
   defaultTime,
@@ -4545,6 +4619,7 @@ function TradeModal({
   onSubmit,
 }: {
   type: Exclude<ModalType, null>;
+  setupOptions: string[];
   paper?: PaperPosition;
   defaultDate: string;
   defaultTime: string;
@@ -4641,7 +4716,7 @@ function TradeModal({
                 <label>
                   <span>Setup</span>
                   <select name="setup">
-                    {setupNames.map((setup) => (
+                    {setupOptions.map((setup) => (
                       <option key={setup}>{setup}</option>
                     ))}
                   </select>

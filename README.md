@@ -25,6 +25,10 @@ Each authenticated user has a separate browser-storage namespace and cloud works
 
 Cloud workspace snapshots are reconciled to the account-owned normalized tables, including removal of records deleted from the workspace. RLS remains the server-side access boundary; browser-side account checks are additional safeguards, not a replacement for database policies.
 
+## Browser-local modules
+
+The research modules are intentionally persisted only in the signed-in user's browser namespace until their database schema is designed: pattern insights, custom setups, strategy test sessions and their trades, resources, notes, study materials, broker/charting references, and weekly reviews. They are never sent in the current cloud workspace snapshot. Do not use these local reference lists for credentials or sensitive account information.
+
 ## Verification
 
 ```sh

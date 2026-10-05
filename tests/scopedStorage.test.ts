@@ -38,6 +38,21 @@ describe("scoped workspace storage", () => {
     expect(readStoredValue(storage, secondUserKey, [])).toEqual([{ id: "private-b" }]);
   });
 
+  it("keeps research module records in the owning account namespace", () => {
+    const storage = createStorage();
+    const key = getScopedStorageKey("aperture.localModules", "user-a");
+    const extensionData = {
+      setups: [{ id: "setup-a", name: "London reversal" }],
+      studyItems: [{ id: "study-a", title: "Risk review" }],
+    };
+
+    writeStoredValue(storage, key, extensionData);
+
+    expect(readStoredValue(storage, key, {})).toEqual(extensionData);
+    expect(readStoredValue(storage, getScopedStorageKey("aperture.localModules", "user-b"), {})).toEqual({});
+    expect(readStoredValue(storage, "aperture.localModules", {})).toEqual({});
+  });
+
   it("uses account defaults for missing or malformed data", () => {
     const storage = createStorage();
     const key = getScopedStorageKey("aperture.goals", "user-a");
